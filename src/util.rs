@@ -1,5 +1,6 @@
 use std::io::{self, Write};
 
+#[derive(Clone)]
 pub struct FileData {
   pub file_name: String,
   pub lines: Vec<String>
