@@ -19,6 +19,6 @@ pub fn repl() -> Option<()> {
       lines: vec![input]
     };
 
-    util::build(&data)?;
+    util::build(&input, &data)?;
   }
 }

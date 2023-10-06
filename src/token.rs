@@ -13,10 +13,13 @@ pub enum Literal {
   Bool(bool)
 }
 
+#[derive(PartialEq)]
 pub enum TokenKind {
   Identifier,
   Number,
   String,
+
+  StatEnd,
 
   Plus,
   Minus,
