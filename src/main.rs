@@ -2,6 +2,7 @@ use std::env;
 
 mod util;
 mod repl;
+mod errors;
 mod token;
 mod lexer;
 

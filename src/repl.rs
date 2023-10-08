@@ -16,7 +16,7 @@ pub fn repl() -> Option<()> {
 
     let data = util::FileData {
       file_name: "REPL".to_string(),
-      lines: vec![input]
+      lines: vec![input.clone()]
     };
 
     util::build(&input, &data)?;

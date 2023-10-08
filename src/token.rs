@@ -1,4 +1,31 @@
+extern crate lazy_static;
+
+use lazy_static::lazy_static;
+use std::collections::HashMap;
+
 use crate::util;
+
+lazy_static! {
+  pub static ref KEYWORDS: HashMap<&'static str, TokenKind> = HashMap::from([
+    ("println", TokenKind::PrintlnKw),
+    ("print", TokenKind::PrintKw),
+    ("input", TokenKind::InputKw),
+    ("goto", TokenKind::GotoKw),
+    ("run", TokenKind::RunKw),
+    ("ret", TokenKind::RetKw),
+    ("exec", TokenKind::ExecKw),
+    ("exit", TokenKind::ExitKw),
+    ("if", TokenKind::IfKw),
+    ("else", TokenKind::ElseKw),
+    ("nil", TokenKind::NilKw)
+  ]);
+
+  pub static ref TYPES: HashMap<&'static str, TokenKind> = HashMap::from([
+    ("num", TokenKind::NumType),
+    ("str", TokenKind::StrType),
+    ("bool", TokenKind::BoolType)
+  ]);
+}
 
 pub struct Token {
   pub kind: TokenKind,
@@ -10,10 +37,11 @@ pub struct Token {
 pub enum Literal {
   Num(f64),
   Str(String),
-  Bool(bool)
+  Bool(bool),
+  Nil
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Copy, Clone)]
 pub enum TokenKind {
   Identifier,
   Number,
@@ -34,12 +62,18 @@ pub enum TokenKind {
   Assign,
   Bang,
 
+  And,
+  Or,
+
   PlusAssign,
   MinusAssign,
   TimesAssign,
   DivideAssign,
 
   ModuloAssign,
+
+  AndAssign,
+  OrAssign,
 
   Equal,
   NotEqual,
@@ -59,5 +93,13 @@ pub enum TokenKind {
   ExecKw,
   ExitKw,
   IfKw,
-  ElseKw
+  ElseKw,
+
+  TrueKw,
+  FalseKw,
+  NilKw,
+
+  NumType,
+  StrType,
+  BoolType,
 }
