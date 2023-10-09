@@ -1,4 +1,4 @@
-use crate::{util, token::{self, TokenKind}};
+use crate::{util, errors, token};
 
 macro_rules! ope_or_assign {
   ($self: expr, $a: expr, $b: expr) => {
@@ -130,7 +130,7 @@ impl Lexer {
 
           match kind {
             token::TokenKind::NilKw => Some(self.new_token_literal(kind, token::Literal::Nil)),
-            token::TokenKind::TrueKw | token::TokenKind::FalseKw => Some(self.new_token_literal(kind, token::Literal::Bool(kind == TokenKind::TrueKw))),
+            token::TokenKind::TrueKw | token::TokenKind::FalseKw => Some(self.new_token_literal(kind, token::Literal::Bool(kind == token::TokenKind::TrueKw))),
 
             _ => Some(self.new_token_str(kind))
           }
@@ -144,8 +144,8 @@ impl Lexer {
           let num = match self.input.clone().drain(self.start..self.cursor).collect::<String>().parse::<f64>() {
               Ok(n) => n,
               Err(_) => {
-                // todo! throw error
-                return None;
+                errors::throw_error(errors::ErrorKind::InvalidNumberLiteral)?;
+                0.0
               }
           };
 
@@ -158,10 +158,10 @@ impl Lexer {
           }
 
           if !self.match_adv('"') {
-            // todo! throw error
+            errors::throw_error(errors::ErrorKind::UnfinishedString)?;
           }
 
-          let new_pos = self.start_pos.clone();
+          let mut new_pos = self.start_pos.clone();
           new_pos.col += 1;
 
           let lexeme: String = self.input.clone().drain(self.start + 1..self.cursor - 1).collect();
@@ -175,7 +175,7 @@ impl Lexer {
         }
 
         else {
-          // todo! throw error
+          errors::throw_error(errors::ErrorKind::InvalidToken)?
         }
       }
     }
@@ -218,6 +218,12 @@ impl Lexer {
     while self.peek(0).is_whitespace() && self.peek(0) != '\n' {
       self.advance();
     }
+  }
+
+  // Errors
+
+  fn generate_code_details(&self) -> errors::CodeDetails {
+
   }
 
   // New Token
