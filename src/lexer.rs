@@ -144,7 +144,7 @@ impl Lexer {
           let num = match self.input.clone().drain(self.start..self.cursor).collect::<String>().parse::<f64>() {
               Ok(n) => n,
               Err(_) => {
-                errors::throw_error(errors::ErrorKind::InvalidNumberLiteral)?;
+                errors::throw_error(errors::ErrorKind::InvalidNumberLiteral, self.generate_code_details())?;
                 0.0
               }
           };
@@ -158,7 +158,7 @@ impl Lexer {
           }
 
           if !self.match_adv('"') {
-            errors::throw_error(errors::ErrorKind::UnfinishedString)?;
+            errors::throw_error(errors::ErrorKind::UnfinishedString, self.generate_code_details())?;
           }
 
           let mut new_pos = self.start_pos.clone();
@@ -175,7 +175,7 @@ impl Lexer {
         }
 
         else {
-          errors::throw_error(errors::ErrorKind::InvalidToken)?
+          errors::throw_error(errors::ErrorKind::InvalidToken, self.generate_code_details())?
         }
       }
     }
@@ -223,7 +223,10 @@ impl Lexer {
   // Errors
 
   fn generate_code_details(&self) -> errors::CodeDetails {
-
+    errors::CodeDetails {
+      line: self.file_data.lines[self.start_pos.line].clone(),
+      position: self.start_pos.clone()
+    }
   }
 
   // New Token
