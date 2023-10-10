@@ -27,6 +27,7 @@ lazy_static! {
   ]);
 }
 
+#[derive(PartialEq, Debug)]
 pub struct Token {
   pub kind: TokenKind,
   pub lexeme: String,
@@ -34,6 +35,7 @@ pub struct Token {
   pub pos: util::Position
 }
 
+#[derive(PartialEq)]
 pub enum Literal {
   Num(f64),
   Str(String),

@@ -144,7 +144,7 @@ impl Lexer {
           let num = match self.input.clone().drain(self.start..self.cursor).collect::<String>().parse::<f64>() {
               Ok(n) => n,
               Err(_) => {
-                errors::throw_error(errors::ErrorKind::InvalidNumberLiteral, self.generate_code_details())?;
+                errors::throw_error(&errors::ErrorKind::InvalidNumberLiteral, &self.generate_code_details(), &self.file_data)?;
                 0.0
               }
           };
@@ -158,7 +158,7 @@ impl Lexer {
           }
 
           if !self.match_adv('"') {
-            errors::throw_error(errors::ErrorKind::UnfinishedString, self.generate_code_details())?;
+            errors::throw_error(&errors::ErrorKind::UnfinishedString, &self.generate_code_details(), &self.file_data)?;
           }
 
           let mut new_pos = self.start_pos.clone();
@@ -175,7 +175,7 @@ impl Lexer {
         }
 
         else {
-          errors::throw_error(errors::ErrorKind::InvalidToken, self.generate_code_details())?
+          errors::throw_error(&errors::ErrorKind::InvalidToken, &self.generate_code_details(), &self.file_data)?
         }
       }
     }
@@ -224,8 +224,8 @@ impl Lexer {
 
   fn generate_code_details(&self) -> errors::CodeDetails {
     errors::CodeDetails {
-      line: self.file_data.lines[self.start_pos.line].clone(),
-      position: self.start_pos.clone()
+      line: self.file_data.lines[self.start_pos.line].chars().collect(),
+      pos: self.start_pos.clone()
     }
   }
 
@@ -283,5 +283,22 @@ fn is_number(is_start: bool, c: char) -> bool {
   match is_start {
     true => c.is_digit(10),
     false => c.is_digit(10) || c == '.'
+  }
+}
+
+#[cfg(test)]
+mod tests {
+  use super::Lexer;
+
+  #[test]
+  fn test_invalid() {
+    let input = "123 $";
+    let mut lexer = Lexer::new(input, crate::util::FileData {
+      file_name: "test!".into(),
+      lines: vec![input.into()]
+    });
+
+    println!("{:?}", lexer.lex());
+    //assert_eq!(lexer.lex(), Some(vec![]));
   }
 }
